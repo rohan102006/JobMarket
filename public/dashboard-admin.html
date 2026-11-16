@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Job Market</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .admin-badge-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .admin-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #e1f3fc;
+            border: 1px solid #b3dbf2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--primary);
+            margin: 0 auto 15px auto;
+            font-weight: 700;
+        }
+
+        .admin-title-display {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .admin-role-display {
+            font-size: 12px;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .menu-btn:hover {
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--text-main);
+        }
+
+        .menu-btn.active {
+            background: rgba(10, 102, 194, 0.08);
+            border-color: rgba(10, 102, 194, 0.2);
+            color: var(--primary);
+        }
+
+        /* Views */
+        .content-view {
+            display: none;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .content-view.active {
+            display: block;
+        }
+
+        .view-header {
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .view-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .stat-details h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--primary);
+        }
+
+        .stat-details p {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            opacity: 0.15;
+            color: var(--primary);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            padding: 12px 16px;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 600;
+            background-color: #f8f9fa;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: #f8f9fa;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header></header>
+
+    <main>
+        <div class="dashboard-layout">
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="card admin-badge-card">
+                    <div class="admin-avatar">A</div>
+                    <div class="admin-title-display">Admin Portal</div>
+                    <div class="admin-role-display">Administrator</div>
+                </div>
+
+                <div class="sidebar-menu">
+                    <button onclick="switchView('stats', this)" class="menu-btn active">
+                        <i class="fa-solid fa-chart-pie"></i> Overview & Stats
+                    </button>
+                    <button onclick="switchView('users', this)" class="menu-btn">
+                        <i class="fa-solid fa-user-graduate"></i> Manage Users
+                    </button>
+                    <button onclick="switchView('recruiters', this)" class="menu-btn">
+                        <i class="fa-solid fa-user-tie"></i> Manage Recruiters
+                    </button>
+                    <button onclick="switchView('jobs', this)" class="menu-btn">
+                        <i class="fa-solid fa-shield-halved"></i> Moderate Jobs
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="card" style="padding: 30px;">
+                
+                <!-- VIEW: Stats Overview -->
+                <div id="view-stats" class="content-view active">
+                    <div class="view-header">
+                        <h2>System Overview</h2>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="card stat-box">
+                            <div class="stat-details">
+                                <h3 id="stat-seekers-count">0</h3>
+                                <p>Job Seekers Registered</p>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                        </div>
+                        <div class="card stat-box">
+                            <div class="stat-details">
+                                <h3 id="stat-recruiters-count">0</h3>
+                                <p>Recruiters Approved</p>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-briefcase"></i></div>
+                        </div>
+                        <div class="card stat-box">
+                            <div class="stat-details">
+                                <h3 id="stat-jobs-count">0</h3>
+                                <p>Total Job Postings</p>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                        </div>
+                        <div class="card stat-box">
+                            <div class="stat-details">
+                                <h3 id="stat-apps-count">0</h3>
+                                <p>Applications Submitted</p>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-paper-plane"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="background: rgba(99, 102, 241, 0.03); border-color: rgba(99, 102, 241, 0.15);">
+                        <h4><i class="fa-solid fa-circle-info" style="color: var(--primary); margin-right: 8px;"></i> Administrator Controls</h4>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">As an administrator, you have complete authority to manage users, recruiters, and active job postings. Deleting a recruiter will automatically delete their company profile and all posted job vacancies.</p>
+                    </div>
+                </div>
+
+                <!-- VIEW: Manage Users -->
+                <div id="view-users" class="content-view">
+                    <div class="view-header">
+                        <h2>Manage Users (Job Seekers)</h2>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Candidate Name</th>
+                                    <th>Email Address</th>
+                                    <th>Title</th>
+                                    <th>Registered Date</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-users-list">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW: Manage Recruiters -->
+                <div id="view-recruiters" class="content-view">
+                    <div class="view-header">
+                        <h2>Manage Recruiters</h2>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Recruiter Name</th>
+                                    <th>Email Address</th>
+                                    <th>Company Profile</th>
+                                    <th>Location</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-recruiters-list">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW: Moderate Jobs -->
+                <div id="view-jobs" class="content-view">
+                    <div class="view-header">
+                        <h2>Moderate Job Postings</h2>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Job Opportunity</th>
+                                    <th>Company</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th style="text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-jobs-list">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Job Market Portal. Administrative Dashboard.</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Access Protection
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getSessionUser();
+            if (!user || user.role !== 'Admin') {
+                showNotification('Access denied: Administrator login required.', 'error');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadStats();
+            loadUsers();
+            loadRecruiters();
+            loadJobs();
+        });
+
+        function switchView(viewId, btn) {
+            document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            
+            // Fix double ID match for 'jobs'
+            const viewSelector = viewId === 'jobs' ? 'div[id="view-jobs"]' : `#view-${viewId}`;
+            document.querySelector(viewSelector).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        async function loadStats() {
+            try {
+                const stats = await apiRequest('/api/admin/stats');
+                
+                document.getElementById('stat-seekers-count').innerText = stats.users;
+                document.getElementById('stat-recruiters-count').innerText = stats.recruiters;
+                document.getElementById('stat-jobs-count').innerText = stats.jobs;
+                document.getElementById('stat-apps-count').innerText = stats.applications;
+            } catch (err) {
+                console.error("Failed to load admin statistics:", err);
+            }
+        }
+
+        async function loadUsers() {
+            const tbody = document.getElementById('admin-users-list');
+            try {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                            <p>Loading candidates list...</p>
+                        </td>
+                    </tr>
+                `;
+                const users = await apiRequest('/api/admin/users');
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">No job seekers registered.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td><strong>${user.name}</strong></td>
+                        <td>${user.email}</td>
+                        <td>${user.title || 'Profile incomplete'}</td>
+                        <td>${formatDate(user.created_at)}</td>
+                        <td style="text-align: center;">
+                            <button onclick="deleteUser(${user.id})" class="btn btn-danger btn-sm" style="padding: 6px 12px;">
+                                <i class="fa-solid fa-user-slash"></i> Remove
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 30px;">Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm("Are you sure you want to permanently delete this candidate? This will delete all of their submitted job applications.")) return;
+            try {
+                await apiRequest(`/api/admin/users/${id}`, {
+                    method: 'DELETE'
+                });
+                showNotification("Job seeker removed from system.", "success");
+                loadStats();
+                loadUsers();
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        async function loadRecruiters() {
+            const tbody = document.getElementById('admin-recruiters-list');
+            try {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                            <p>Loading recruiters list...</p>
+                        </td>
+                    </tr>
+                `;
+                const recruiters = await apiRequest('/api/admin/recruiters');
+                
+                if (recruiters.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">No recruiters registered.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = recruiters.map(rec => `
+                    <tr>
+                        <td><strong>${rec.name}</strong></td>
+                        <td>${rec.email}</td>
+                        <td>${rec.company_name}</td>
+                        <td>${rec.company_location}</td>
+                        <td style="text-align: center;">
+                            <button onclick="deleteRecruiter(${rec.id})" class="btn btn-danger btn-sm" style="padding: 6px 12px;">
+                                <i class="fa-solid fa-user-slash"></i> Remove
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 30px;">Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        async function deleteRecruiter(id) {
+            if (!confirm("Are you sure you want to permanently delete this recruiter? This will remove their company profile and all posted job vacancies.")) return;
+            try {
+                await apiRequest(`/api/admin/recruiters/${id}`, {
+                    method: 'DELETE'
+                });
+                showNotification("Recruiter and company data deleted successfully.", "success");
+                loadStats();
+                loadRecruiters();
+                loadJobs(); // refresh jobs too
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        async function loadJobs() {
+            const tbody = document.getElementById('admin-jobs-list');
+            try {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                            <p>Loading jobs list...</p>
+                        </td>
+                    </tr>
+                `;
+                const jobs = await apiRequest('/api/jobs');
+                
+                if (jobs.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">No job vacancies posted.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = jobs.map(job => {
+                    let badgeClass = job.status === 'Active' ? 'badge-active' : 'badge-inactive';
+                    return `
+                        <tr>
+                            <td><strong>${job.title}</strong></td>
+                            <td>${job.company_name}</td>
+                            <td>${job.category}</td>
+                            <td><span class="badge ${badgeClass}">${job.status}</span></td>
+                            <td style="text-align: center;">
+                                <button onclick="deleteJob(${job.id})" class="btn btn-danger btn-sm" style="padding: 6px 12px;">
+                                    <i class="fa-solid fa-trash-can"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--danger); padding: 30px;">Error: ${err.message}</td></tr>`;
+            }
+        }
+
+        async function deleteJob(id) {
+            if (!confirm("Are you sure you want to delete this job vacancy? This will remove all associated applications.")) return;
+            try {
+                await apiRequest(`/api/jobs/${id}`, {
+                    method: 'DELETE'
+                });
+                showNotification("Job posting moderated and deleted.", "success");
+                loadStats();
+                loadJobs();
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

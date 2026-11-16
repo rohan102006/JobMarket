@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Dashboard - Job Market</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .company-badge-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .company-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: var(--radius-md);
+            background: #e1f3fc;
+            border: 1px solid #b3dbf2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--primary);
+            margin: 0 auto 15px auto;
+            font-weight: 800;
+        }
+
+        .company-title-display {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .company-location-display {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .menu-btn:hover {
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--text-main);
+        }
+
+        .menu-btn.active {
+            background: rgba(10, 102, 194, 0.08);
+            border-color: rgba(10, 102, 194, 0.2);
+            color: var(--primary);
+        }
+
+        /* Views */
+        .content-view {
+            display: none;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .content-view.active {
+            display: block;
+        }
+
+        .view-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .view-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            padding: 12px 16px;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 600;
+            background-color: #f8f9fa;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: #f8f9fa;
+        }
+
+        /* Applicant info card details */
+        .applicant-info {
+            background: rgba(0, 0, 0, 0.01);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            margin-top: 5px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .applicant-info strong {
+            color: var(--text-main);
+        }
+
+        /* Toggle Button */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 22px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 22px;
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 14px; width: 14px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--success);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header></header>
+
+    <main>
+        <div class="dashboard-layout">
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="card company-badge-card">
+                    <div class="company-logo" id="logo-letter">C</div>
+                    <div class="company-title-display" id="logo-title">Recruiter Profile</div>
+                    <div class="company-location-display" id="logo-location">Remote</div>
+                </div>
+
+                <div class="sidebar-menu">
+                    <button onclick="switchView('jobs', this)" class="menu-btn active">
+                        <i class="fa-solid fa-list-check"></i> Manage Job Openings
+                    </button>
+                    <button onclick="switchView('post-job', this)" id="post-job-nav-btn" class="menu-btn">
+                        <i class="fa-solid fa-folder-plus"></i> Post a New Job
+                    </button>
+                    <button onclick="switchView('applicants', this)" class="menu-btn">
+                        <i class="fa-solid fa-users-viewfinder"></i> View Applicants
+                    </button>
+                    <button onclick="switchView('company-profile', this)" class="menu-btn">
+                        <i class="fa-solid fa-hotel"></i> Company Profile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Panel -->
+            <div class="card" style="padding: 30px;">
+                
+                <!-- VIEW: Manage Jobs -->
+                <div id="view-jobs" class="content-view active">
+                    <div class="view-header">
+                        <h2>Manage Job Openings</h2>
+                        <button onclick="document.getElementById('post-job-nav-btn').click(); resetJobForm();" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-plus"></i> Post Job
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Job Title</th>
+                                    <th>Category</th>
+                                    <th>Salary</th>
+                                    <th>Status</th>
+                                    <th style="text-align: center;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recruiter-jobs-list">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW: Post/Edit Job -->
+                <div id="view-post-job" class="content-view">
+                    <div class="view-header">
+                        <h2 id="job-form-title">Post a New Job</h2>
+                    </div>
+
+                    <form id="job-form" onsubmit="saveJob(event)">
+                        <input type="hidden" id="edit-job-id" value="">
+
+                        <div class="form-group">
+                            <label for="job-title">Job Title</label>
+                            <input type="text" id="job-title" class="form-control" placeholder="e.g. Lead Software Development Engineer" required>
+                        </div>
+
+                        <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label for="job-category">Category</label>
+                                <select id="job-category" required>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Frontend">Frontend</option>
+                                    <option value="Backend">Backend</option>
+                                    <option value="Management">Management</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Sales">Sales</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="job-experience">Experience Level</label>
+                                <select id="job-experience" required>
+                                    <option value="Junior">Junior</option>
+                                    <option value="Mid-Level">Mid-Level</option>
+                                    <option value="Senior">Senior</option>
+                                    <option value="Lead">Lead</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label for="job-location">Job Location</label>
+                                <input type="text" id="job-location" class="form-control" placeholder="e.g. Remote, Austin, TX" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="job-salary">Salary Range</label>
+                                <input type="text" id="job-salary" class="form-control" placeholder="e.g. $100k - $120k / year" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="job-description">Job Description</label>
+                            <textarea id="job-description" rows="5" class="form-control" placeholder="Summarize the role and daily responsibilities..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="job-requirements">Requirements</label>
+                            <textarea id="job-requirements" rows="4" class="form-control" placeholder="Enter list of requirements, credentials, or tools required..."></textarea>
+                        </div>
+
+                        <div class="form-group" id="edit-status-group" style="display: none;">
+                            <label for="job-status">Job Status</label>
+                            <select id="job-status">
+                                <option value="Active">Active / Hiring</option>
+                                <option value="Inactive">Inactive / Suspended</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">
+                            Save Job Listing <i class="fa-solid fa-cloud-arrow-up"></i>
+                        </button>
+                        <button type="button" onclick="cancelJobForm()" class="btn btn-secondary" style="margin-top: 10px; margin-left: 10px;">
+                            Cancel
+                        </button>
+                    </form>
+                </div>
+
+                <!-- VIEW: Applicants -->
+                <div id="view-applicants" class="content-view">
+                    <div class="view-header">
+                        <h2>Candidate Applications</h2>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Applied Job</th>
+                                    <th>Applied On</th>
+                                    <th>Status Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recruiter-applicants-list">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW: Company Profile -->
+                <div id="view-company-profile" class="content-view">
+                    <div class="view-header">
+                        <h2>Company Profile</h2>
+                    </div>
+
+                    <form id="company-form" onsubmit="saveCompany(event)">
+                        <div class="form-group">
+                            <label for="comp-name">Company Name</label>
+                            <input type="text" id="comp-name" class="form-control" required>
+                        </div>
+
+                        <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label for="comp-website">Website URL</label>
+                                <input type="url" id="comp-website" class="form-control" placeholder="https://example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="comp-location">Location HQ</label>
+                                <input type="text" id="comp-location" class="form-control" placeholder="e.g. San Francisco, CA">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comp-desc">About Company</label>
+                            <textarea id="comp-desc" rows="5" class="form-control" placeholder="Describe the company products, values, or size..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Save Profile Details <i class="fa-solid fa-circle-check"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Job Market Portal. Built using modern design aesthetics.</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Access Protection
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getSessionUser();
+            if (!user || user.role !== 'Recruiter') {
+                showNotification('Access denied: Recruiter account required.', 'error');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadRecruiterCompany();
+            loadRecruiterJobs();
+            loadApplicants();
+        });
+
+        function switchView(viewId, btn) {
+            document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(`view-${viewId}`).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        async function loadRecruiterCompany() {
+            try {
+                const company = await apiRequest('/api/company');
+                
+                document.getElementById('comp-name').value = company.name || '';
+                document.getElementById('comp-website').value = company.website || '';
+                document.getElementById('comp-location').value = company.location || '';
+                document.getElementById('comp-desc').value = company.description || '';
+
+                // Update sidebar details
+                document.getElementById('logo-title').innerText = company.name;
+                document.getElementById('logo-location').innerText = company.location || 'Remote';
+                document.getElementById('logo-letter').innerText = company.name ? company.name.charAt(0).toUpperCase() : 'C';
+            } catch (err) {
+                console.error("Failed to load recruiter company profile:", err);
+            }
+        }
+
+        async function loadRecruiterJobs() {
+            const tbody = document.getElementById('recruiter-jobs-list');
+            try {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                            <p>Loading your job listings...</p>
+                        </td>
+                    </tr>
+                `;
+
+                // First find company ID
+                const company = await apiRequest('/api/company');
+                if (!company) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">
+                                <p>Please configure your Company Profile first.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                // Fetch jobs by company
+                const jobs = await apiRequest(`/api/jobs?company_id=${company.id}`);
+                
+                if (jobs.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                <i class="fa-solid fa-folder-open" style="font-size: 28px; margin-bottom: 10px;"></i>
+                                <p>You haven't posted any job openings yet.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = jobs.map(job => {
+                    const isChecked = job.status === 'Active' ? 'checked' : '';
+                    return `
+                        <tr>
+                            <td>
+                                <strong style="color: var(--text-main);">${job.title}</strong>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 3px;">Posted: ${formatDate(job.created_at)}</div>
+                            </td>
+                            <td>${job.category}</td>
+                            <td>${job.salary}</td>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" ${isChecked} onchange="toggleJobStatus(${job.id}, this)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </td>
+                            <td style="text-align: center;">
+                                <div style="display: flex; gap: 10px; justify-content: center;">
+                                    <button onclick="editJobUI(${job.id})" class="btn btn-secondary btn-sm" style="padding: 6px 12px;">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </button>
+                                    <button onclick="deleteJob(${job.id})" class="btn btn-danger btn-sm" style="padding: 6px 12px;">
+                                        <i class="fa-solid fa-trash-can"></i> Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--danger); padding: 40px;">
+                            <i class="fa-solid fa-circle-exclamation" style="font-size: 24px; margin-bottom: 10px;"></i>
+                            <p>Failed to load listings: ${err.message}</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function toggleJobStatus(jobId, checkbox) {
+            const newStatus = checkbox.checked ? 'Active' : 'Inactive';
+            try {
+                await apiRequest(`/api/jobs/${jobId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: newStatus })
+                });
+                showNotification(`Job listing marked as ${newStatus}!`, 'success');
+            } catch (err) {
+                showNotification(err.message, 'error');
+                checkbox.checked = !checkbox.checked; // revert
+            }
+        }
+
+        async function loadApplicants() {
+            const tbody = document.getElementById('recruiter-applicants-list');
+            try {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                            <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                            <p>Loading candidate list...</p>
+                        </td>
+                    </tr>
+                `;
+
+                const apps = await apiRequest('/api/applications');
+
+                if (apps.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                <i class="fa-solid fa-user-slash" style="font-size: 28px; margin-bottom: 10px;"></i>
+                                <p>No candidates have applied to your listings yet.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = apps.map(app => {
+                    const resumeHtml = app.applicant_resume_path 
+                        ? `<a href="${app.applicant_resume_path}" target="_blank" style="color: var(--success); font-weight: 700;"><i class="fa-solid fa-file-pdf"></i> View Resume PDF</a>`
+                        : `<span style="color: var(--text-muted);"><i class="fa-solid fa-file-excel"></i> File Resume not uploaded</span>`;
+
+                    return `
+                        <tr>
+                            <td>
+                                <strong style="color: var(--text-main); font-size: 15px;">${app.applicant_name}</strong>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 3px;">Email: ${app.applicant_email}</div>
+                                <div class="applicant-info">
+                                    <strong>Title:</strong> ${app.applicant_title || 'N/A'}<br>
+                                    <strong>Skills:</strong> ${app.applicant_skills || 'N/A'}<br>
+                                    <strong>Experience:</strong> ${app.applicant_experience || 'N/A'}<br>
+                                    <div style="margin-top: 8px; font-style: italic;">
+                                        <strong>Cover/Text Resume:</strong><br>${app.resume_text.replace(/\n/g, '<br>')}
+                                    </div>
+                                    <div style="margin-top: 8px;">
+                                        ${resumeHtml}
+                                    </div>
+                                </div>
+                            </td>
+                            <td><strong>${app.job_title}</strong></td>
+                            <td>${formatDate(app.applied_at)}</td>
+                            <td>
+                                <select onchange="updateApplicantStatus(${app.id}, this.value)" style="padding: 6px 12px; font-size: 13px; width: 150px;">
+                                    <option value="Pending" ${app.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="Interviewing" ${app.status === 'Interviewing' ? 'selected' : ''}>Interviewing</option>
+                                    <option value="Offered" ${app.status === 'Offered' ? 'selected' : ''}>Offered</option>
+                                    <option value="Rejected" ${app.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--danger); padding: 40px;">
+                            <i class="fa-solid fa-circle-exclamation" style="font-size: 24px; margin-bottom: 10px;"></i>
+                            <p>Failed to load applicants: ${err.message}</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function updateApplicantStatus(appId, newStatus) {
+            try {
+                await apiRequest(`/api/applications/${appId}/status`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: newStatus })
+                });
+                showNotification(`Applicant marked as: ${newStatus}!`, 'success');
+                loadApplicants();
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        async function saveJob(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('edit-job-id').value;
+            const title = document.getElementById('job-title').value;
+            const category = document.getElementById('job-category').value;
+            const experience_level = document.getElementById('job-experience').value;
+            const location = document.getElementById('job-location').value;
+            const salary = document.getElementById('job-salary').value;
+            const description = document.getElementById('job-description').value;
+            const requirements = document.getElementById('job-requirements').value;
+            
+            const jobData = { title, category, experience_level, location, salary, description, requirements };
+            
+            try {
+                if (id) {
+                    // Update
+                    jobData.status = document.getElementById('job-status').value;
+                    await apiRequest(`/api/jobs/${id}`, {
+                        method: 'PUT',
+                        body: JSON.stringify(jobData)
+                    });
+                    showNotification("Job vacancy details updated!", "success");
+                } else {
+                    // Create
+                    await apiRequest('/api/jobs', {
+                        method: 'POST',
+                        body: JSON.stringify(jobData)
+                    });
+                    showNotification("Job opportunity posted successfully!", "success");
+                }
+                
+                resetJobForm();
+                switchView('jobs', document.querySelector('.sidebar-menu button'));
+                loadRecruiterJobs();
+            } catch (err) {
+                showNotification(err.message, "error");
+            }
+        }
+
+        async function editJobUI(jobId) {
+            try {
+                const job = await apiRequest(`/api/jobs/${jobId}`);
+                
+                document.getElementById('edit-job-id').value = job.id;
+                document.getElementById('job-title').value = job.title;
+                document.getElementById('job-category').value = job.category;
+                document.getElementById('job-experience').value = job.experience_level;
+                document.getElementById('job-location').value = job.location;
+                document.getElementById('job-salary').value = job.salary;
+                document.getElementById('job-description').value = job.description;
+                document.getElementById('job-requirements').value = job.requirements || '';
+                
+                document.getElementById('job-status').value = job.status;
+                document.getElementById('edit-status-group').style.display = 'block';
+                document.getElementById('job-form-title').innerText = "Edit Job Opening";
+                
+                switchView('post-job', document.getElementById('post-job-nav-btn'));
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        async function deleteJob(jobId) {
+            if (!confirm("Are you sure you want to permanently delete this job listing and its candidate applications?")) return;
+            try {
+                await apiRequest(`/api/jobs/${jobId}`, {
+                    method: 'DELETE'
+                });
+                showNotification("Job vacancy successfully removed.", "success");
+                loadRecruiterJobs();
+                loadApplicants(); // update lists
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        function resetJobForm() {
+            document.getElementById('job-form').reset();
+            document.getElementById('edit-job-id').value = '';
+            document.getElementById('edit-status-group').style.display = 'none';
+            document.getElementById('job-form-title').innerText = "Post a New Job";
+        }
+
+        function cancelJobForm() {
+            resetJobForm();
+            switchView('jobs', document.querySelector('.sidebar-menu button'));
+        }
+
+        async function saveCompany(e) {
+            e.preventDefault();
+            const name = document.getElementById('comp-name').value;
+            const website = document.getElementById('comp-website').value;
+            const location = document.getElementById('comp-location').value;
+            const description = document.getElementById('comp-desc').value;
+
+            try {
+                await apiRequest('/api/company', {
+                    method: 'PUT',
+                    body: JSON.stringify({ name, website, location, description })
+                });
+                showNotification("Company profile details updated!", "success");
+                loadRecruiterCompany();
+                loadRecruiterJobs(); // refresh company details in jobs if needed
+            } catch (err) {
+                showNotification(err.message, "error");
+            }
+        }
+    </script>
+</body>
+</html>

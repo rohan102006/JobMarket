@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In - Job Market</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-slate));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+
+        .login-card {
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-header h2 {
+            font-size: 30px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--text-main), var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Role Selector Tabs */
+        .role-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 4px;
+            margin-bottom: 30px;
+        }
+
+        .role-tab {
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .role-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+        }
+
+        .input-icon-container {
+            position: relative;
+        }
+
+        .input-icon-container i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        .input-icon-container input, .input-icon-container select {
+            padding-left: 45px;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="btn btn-secondary btn-sm back-home">
+        <i class="fa-solid fa-arrow-left"></i> Home
+    </a>
+
+    <div class="login-container">
+        <div class="card login-card">
+            
+            <div class="login-header">
+                <h2>Welcome Back</h2>
+                <p>Log in to access your customized dashboard</p>
+            </div>
+
+            <!-- Role Selector -->
+            <div class="role-tabs">
+                <button type="button" class="role-tab active" onclick="setRole('User', this)">Job Seeker</button>
+                <button type="button" class="role-tab" onclick="setRole('Recruiter', this)">Recruiter</button>
+                <button type="button" class="role-tab" onclick="setRole('Admin', this)">Admin</button>
+            </div>
+
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <input type="hidden" id="selected-role" value="User">
+
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <div class="input-icon-container">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="login-email" class="form-control" placeholder="e.g. alex@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <div class="input-icon-container">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="login-password" class="form-control" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px; height: 48px;">
+                    Log In <i class="fa-solid fa-right-to-bracket"></i>
+                </button>
+            </form>
+
+            <div class="form-footer" id="signup-prompt">
+                Don't have an account? <a href="register.html">Sign Up</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Redirect if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getSessionUser();
+            if (user) {
+                redirectDashboard(user.role);
+            }
+        });
+
+        function setRole(role, btn) {
+            document.getElementById('selected-role').value = role;
+            
+            // Toggle active state
+            document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Hide/Show register prompt (Admins cannot register accounts online)
+            const prompt = document.getElementById('signup-prompt');
+            if (role === 'Admin') {
+                prompt.style.visibility = 'hidden';
+            } else {
+                prompt.style.visibility = 'visible';
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const role = document.getElementById('selected-role').value;
+
+            try {
+                const result = await apiRequest('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password, role })
+                });
+
+                if (result.success) {
+                    setSessionUser(result.user);
+                    showNotification(`Welcome back, ${result.user.name}!`, 'success');
+                    
+                    // Redirect to corresponding dashboard after brief delay
+                    setTimeout(() => {
+                        redirectDashboard(result.user.role);
+                    }, 800);
+                }
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        function redirectDashboard(role) {
+            if (role === 'Admin') {
+                window.location.href = 'dashboard-admin.html';
+            } else if (role === 'Recruiter') {
+                window.location.href = 'dashboard-recruiter.html';
+            } else {
+                window.location.href = 'dashboard-user.html';
+            }
+        }
+    </script>
+</body>
+</html>

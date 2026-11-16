@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Opportunity Details - Job Market</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .details-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .job-main-card {
+            padding: 40px;
+        }
+
+        .details-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 25px;
+            margin-bottom: 30px;
+        }
+
+        .details-company {
+            font-size: 15px;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .details-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .details-pill-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .details-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .details-pill i {
+            color: var(--primary);
+        }
+
+        .details-section {
+            margin-bottom: 30px;
+        }
+
+        .details-section h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            border-left: 3px solid var(--primary);
+            padding-left: 12px;
+        }
+
+        .details-section p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-line; /* preserves formatting */
+        }
+
+        /* Sidebar Info Card */
+        .sidebar-card {
+            padding: 30px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .company-info-block {
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .company-logo-big {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-lg);
+            background: #e1f3fc;
+            border: 1px solid #b3dbf2;
+            color: var(--primary);
+            font-size: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin: 0 auto 15px auto;
+        }
+
+        .company-name-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .company-meta-link {
+            font-size: 13px;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .company-meta-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Apply Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 550px;
+            padding: 30px;
+            transform: scale(0.95);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        @media (max-width: 992px) {
+            .details-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-card {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header></header>
+
+    <main>
+        <a href="index.html" class="btn btn-secondary btn-sm" style="margin-bottom: 10px;">
+            <i class="fa-solid fa-arrow-left-long"></i> Back to Jobs
+        </a>
+
+        <div id="details-container" class="details-layout" style="display: none;">
+            
+            <!-- Left Side Details -->
+            <div class="card job-main-card">
+                <div class="details-header">
+                    <div class="details-company" id="job-company-name">Google LLC</div>
+                    <h2 class="details-title" id="job-title-display">Software Engineer</h2>
+                    
+                    <div class="details-pill-grid">
+                        <span class="details-pill"><i class="fa-solid fa-briefcase"></i> <span id="job-category-display">Engineering</span></span>
+                        <span class="details-pill"><i class="fa-solid fa-gauge-high"></i> <span id="job-experience-display">Mid-Level</span></span>
+                        <span class="details-pill"><i class="fa-solid fa-location-dot"></i> <span id="job-location-display">Mountain View, CA</span></span>
+                    </div>
+                </div>
+
+                <div class="details-section">
+                    <h3>Position Description</h3>
+                    <p id="job-desc-display">Detailed description goes here...</p>
+                </div>
+
+                <div class="details-section" id="job-reqs-section" style="display: none;">
+                    <h3>Hiring Requirements</h3>
+                    <p id="job-reqs-display">Requirements details...</p>
+                </div>
+            </div>
+
+            <!-- Right Side Sidebar Info -->
+            <div>
+                <div class="card sidebar-card">
+                    <div class="company-info-block">
+                        <div class="company-logo-big" id="company-logo-letter">G</div>
+                        <h4 class="company-name-title" id="sidebar-company-name">Google LLC</h4>
+                        <a href="#" id="company-website-link" class="company-meta-link" target="_blank">
+                            Visit Website <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i>
+                        </a>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; font-size: 14px; color: var(--text-muted);">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Offered Salary:</span>
+                            <strong style="color: var(--success);" id="sidebar-salary">$120,000 - $140,000</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Job Location:</span>
+                            <strong style="color: var(--text-main);" id="sidebar-location">Remote</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Date Posted:</span>
+                            <strong style="color: var(--text-main);" id="sidebar-date">July 17, 2026</strong>
+                        </div>
+                    </div>
+
+                    <!-- Application Action Button -->
+                    <button id="apply-btn" onclick="openApplyModal()" class="btn btn-primary" style="width: 100%; height: 48px;">
+                        Apply for this Job <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                    <div id="apply-warning-msg" style="color: var(--warning); font-size: 12px; text-align: center; margin-top: 10px; font-weight: 500; display: none;">
+                        Recruiters and administrators cannot submit job applications.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="loading-details" style="text-align: center; padding: 80px 20px; color: var(--text-muted);">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 32px; margin-bottom: 15px;"></i>
+            <p>Fetching job information...</p>
+        </div>
+    </main>
+
+    <!-- Application Modal -->
+    <div id="apply-modal" class="modal-overlay">
+        <div class="card modal-card">
+            <div class="modal-header">
+                <h3>Submit Application</h3>
+                <button onclick="closeApplyModal()" class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="apply-form" onsubmit="submitApplication(event)">
+                <div style="background: rgba(255, 255, 255, 0.02); padding: 15px; border-radius: var(--radius-md); border: 1px solid var(--glass-border); margin-bottom: 20px; font-size: 13px;">
+                    <div style="margin-bottom: 8px;"><strong>Applicant:</strong> <span id="modal-user-name">John Doe</span></div>
+                    <div style="margin-bottom: 8px;"><strong>Job Title:</strong> <span id="modal-job-title">Software Engineer</span></div>
+                    <div>
+                        <strong>Resume Status:</strong> 
+                        <span id="modal-resume-status" style="color: var(--success); font-weight: 700;">Uploaded Resume Found</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="apply-cover-letter">Cover Letter / Professional Bio (optional)</label>
+                    <textarea id="apply-cover-letter" class="form-control" rows="5" placeholder="Briefly explain why you are the best fit for this position..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; height: 48px;">
+                    Confirm & Submit Application <i class="fa-solid fa-circle-check"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Job Market Portal. All Rights Reserved.</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        let currentJob = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadJobDetails();
+        });
+
+        async function loadJobDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const jobId = urlParams.get('id');
+
+            if (!jobId) {
+                showNotification("Job vacancy ID is missing.", "error");
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const job = await apiRequest(`/api/jobs/${jobId}`);
+                currentJob = job;
+
+                // Bind main card
+                document.getElementById('job-company-name').innerText = job.company_name;
+                document.getElementById('job-title-display').innerText = job.title;
+                document.getElementById('job-category-display').innerText = job.category;
+                document.getElementById('job-experience-display').innerText = job.experience_level;
+                document.getElementById('job-location-display').innerText = job.location;
+                document.getElementById('job-desc-display').innerText = job.description;
+
+                if (job.requirements) {
+                    document.getElementById('job-reqs-display').innerText = job.requirements;
+                    document.getElementById('job-reqs-section').style.display = 'block';
+                }
+
+                // Bind Sidebar Card
+                document.getElementById('sidebar-company-name').innerText = job.company_name;
+                document.getElementById('company-logo-letter').innerText = job.company_name ? job.company_name.charAt(0).toUpperCase() : 'J';
+                document.getElementById('sidebar-salary').innerText = job.salary;
+                document.getElementById('sidebar-location').innerText = job.location;
+                document.getElementById('sidebar-date').innerText = formatDate(job.created_at);
+
+                const websiteLink = document.getElementById('company-website-link');
+                if (job.company_website && job.company_website !== 'https://') {
+                    websiteLink.href = job.company_website;
+                    websiteLink.style.display = 'inline-flex';
+                } else {
+                    websiteLink.style.display = 'none';
+                }
+
+                // Apply restriction display
+                const user = getSessionUser();
+                if (user && user.role !== 'User') {
+                    document.getElementById('apply-btn').disabled = true;
+                    document.getElementById('apply-btn').style.opacity = '0.5';
+                    document.getElementById('apply-btn').style.cursor = 'not-allowed';
+                    document.getElementById('apply-warning-msg').style.display = 'block';
+                }
+
+                // Switch UI states
+                document.getElementById('loading-details').style.display = 'none';
+                document.getElementById('details-container').style.display = 'grid';
+
+            } catch (err) {
+                document.getElementById('loading-details').innerHTML = `
+                    <div class="card" style="padding: 40px; color: var(--danger); max-width: 500px; margin: 0 auto;">
+                        <i class="fa-solid fa-circle-exclamation" style="font-size: 40px; margin-bottom: 15px;"></i>
+                        <h3>Failed to load job details</h3>
+                        <p style="color: var(--text-muted); margin-top: 5px;">${err.message}</p>
+                        <a href="index.html" class="btn btn-secondary btn-sm" style="margin-top: 20px;">Return Home</a>
+                    </div>
+                `;
+            }
+        }
+
+        function openApplyModal() {
+            const user = getSessionUser();
+            if (!user) {
+                showNotification("Please log in first to apply for jobs.", "info");
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+                return;
+            }
+
+            // Fill Modal detail
+            document.getElementById('modal-user-name').innerText = user.name;
+            document.getElementById('modal-job-title').innerText = currentJob.title;
+            
+            // Check resume
+            checkUserResumeAndOpen();
+        }
+
+        async function checkUserResumeAndOpen() {
+            try {
+                const profile = await apiRequest('/api/profile');
+                const resumeStatus = document.getElementById('modal-resume-status');
+                
+                if (profile.resume_path) {
+                    resumeStatus.innerText = "Active PDF Resume Found (will be attached)";
+                    resumeStatus.style.color = 'var(--success)';
+                } else {
+                    resumeStatus.innerText = "No uploaded resume file found. Please enter details below.";
+                    resumeStatus.style.color = 'var(--warning)';
+                }
+                
+                // Show modal overlay
+                document.getElementById('apply-modal').classList.add('active');
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        function closeApplyModal() {
+            document.getElementById('apply-modal').classList.remove('active');
+            document.getElementById('apply-form').reset();
+        }
+
+        async function submitApplication(e) {
+            e.preventDefault();
+            const coverLetter = document.getElementById('apply-cover-letter').value;
+
+            try {
+                const result = await apiRequest(`/api/jobs/${currentJob.id}/apply`, {
+                    method: 'POST',
+                    body: JSON.stringify({ resume_text: coverLetter })
+                });
+
+                if (result.success) {
+                    showNotification("Application submitted successfully!", "success");
+                    closeApplyModal();
+                }
+            } catch (err) {
+                showNotification(err.message, "error");
+                closeApplyModal();
+            }
+        }
+    </script>
+</body>
+</html>

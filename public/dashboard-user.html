@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Seeker Dashboard - Job Market</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .user-badge-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #e1f3fc;
+            border: 1px solid #b3dbf2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--primary);
+            margin: 0 auto 15px auto;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .user-title {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .menu-btn:hover {
+            background: rgba(0, 0, 0, 0.04);
+            color: var(--text-main);
+        }
+
+        .menu-btn.active {
+            background: rgba(10, 102, 194, 0.08);
+            border-color: rgba(10, 102, 194, 0.2);
+            color: var(--primary);
+        }
+
+        /* Dashboard content views */
+        .content-view {
+            display: none;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .content-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .view-header {
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .view-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Applications List Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            padding: 12px 16px;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--text-muted);
+            font-weight: 600;
+            background-color: #f8f9fa;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: #f8f9fa;
+        }
+
+        .applied-title {
+            font-weight: 700;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+
+        .applied-title:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        /* Resume Upload Box */
+        .resume-upload-zone {
+            border: 2px dashed var(--border-color);
+            padding: 30px;
+            text-align: center;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: var(--transition);
+            background: rgba(0, 0, 0, 0.01);
+            margin-bottom: 25px;
+        }
+
+        .resume-upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(10, 102, 194, 0.04);
+        }
+
+        .resume-file-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--success-light);
+            border: 1px solid rgba(5, 118, 66, 0.2);
+            border-radius: var(--radius-md);
+            padding: 15px 20px;
+            margin-bottom: 25px;
+        }
+
+        .resume-file-info a {
+            color: var(--success);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .resume-file-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loaded header -->
+    <header></header>
+
+    <main>
+        <div class="dashboard-layout">
+            
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="card user-badge-card">
+                    <div class="user-avatar" id="avatar-initials">JD</div>
+                    <div class="user-name" id="user-display-name">John Doe</div>
+                    <div class="user-title" id="user-display-title">Software Engineer</div>
+                </div>
+
+                <div class="sidebar-menu">
+                    <button onclick="switchView('applications', this)" class="menu-btn active">
+                        <i class="fa-solid fa-file-invoice"></i> My Applications
+                    </button>
+                    <button onclick="switchView('profile', this)" class="menu-btn">
+                        <i class="fa-solid fa-user-pen"></i> Edit Profile & Resume
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="card" style="padding: 30px;">
+                
+                <!-- VIEW: Applications -->
+                <div id="view-applications" class="content-view active">
+                    <div class="view-header">
+                        <h2>My Applications</h2>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Job Opportunity</th>
+                                    <th>Company</th>
+                                    <th>Applied On</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applications-list">
+                                <!-- Loaded dynamically -->
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                        <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 10px;"></i>
+                                        <p>Loading your applications...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW: Profile & Resume -->
+                <div id="view-profile" class="content-view">
+                    <div class="view-header">
+                        <h2>Edit Profile & Resume</h2>
+                    </div>
+
+                    <!-- Resume Upload UI -->
+                    <h3>Professional Resume</h3>
+                    <div id="resume-container">
+                        <!-- Loaded dynamically depending on resume presence -->
+                    </div>
+
+                    <!-- Profile Form -->
+                    <h3 style="margin-top: 30px; margin-bottom: 20px; border-top: 1px solid var(--glass-border); padding-top: 25px;">Profile Details</h3>
+                    <form id="profile-form" onsubmit="updateProfile(event)">
+                        <div class="form-group">
+                            <label for="prof-name">Full Name</label>
+                            <input type="text" id="prof-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prof-email">Email Address</label>
+                            <input type="email" id="prof-email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prof-title">Professional Title</label>
+                            <input type="text" id="prof-title" class="form-control" placeholder="e.g. Senior Frontend Developer">
+                        </div>
+                        <div class="form-group">
+                            <label for="prof-skills">Skills (comma separated)</label>
+                            <input type="text" id="prof-skills" class="form-control" placeholder="e.g. HTML5, CSS3, JavaScript, React, SQL">
+                        </div>
+                        <div class="form-group">
+                            <label for="prof-experience">Experience</label>
+                            <input type="text" id="prof-experience" class="form-control" placeholder="e.g. 3 years, Entry-Level">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">
+                            Save Changes <i class="fa-solid fa-circle-check"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Job Market Portal. Built using modern design aesthetics.</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Restrict access
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getSessionUser();
+            if (!user || user.role !== 'User') {
+                showNotification('Access denied: Unauthorized role.', 'error');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Init values
+            document.getElementById('user-display-name').innerText = user.name;
+            document.getElementById('avatar-initials').innerText = user.name ? user.name.split(' ').map(n=>n[0]).join('').substring(0, 2).toUpperCase() : 'JD';
+
+            loadApplications();
+            loadProfileData();
+        });
+
+        // Tab switcher
+        function switchView(viewId, btn) {
+            document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(`view-${viewId}`).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        async function loadApplications() {
+            const tbody = document.getElementById('applications-list');
+            try {
+                const apps = await apiRequest('/api/applications');
+                
+                if (apps.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                                <i class="fa-solid fa-folder-open" style="font-size: 28px; margin-bottom: 10px;"></i>
+                                <p>You haven't submitted any job applications yet.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = apps.map(app => {
+                    let statusClass = 'badge-pending';
+                    if (app.status === 'Interviewing') statusClass = 'badge-info';
+                    if (app.status === 'Offered') statusClass = 'badge-success';
+                    if (app.status === 'Rejected') statusClass = 'badge-danger';
+
+                    return `
+                        <tr>
+                            <td>
+                                <a href="job-details.html?id=${app.job_id}" class="applied-title">${app.job_title}</a>
+                                <div style="font-size: 11px; color: var(--text-muted); margin-top: 3px;">Category: ${app.job_category}</div>
+                            </td>
+                            <td>${app.company_name}</td>
+                            <td>${formatDate(app.applied_at)}</td>
+                            <td><span class="badge ${statusClass}">${app.status}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--danger); padding: 40px;">
+                            <i class="fa-solid fa-circle-exclamation" style="font-size: 24px; margin-bottom: 10px;"></i>
+                            <p>Failed to load applications: ${err.message}</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function loadProfileData() {
+            try {
+                const profile = await apiRequest('/api/profile');
+                
+                document.getElementById('prof-name').value = profile.name || '';
+                document.getElementById('prof-email').value = profile.email || '';
+                document.getElementById('prof-title').value = profile.title || '';
+                document.getElementById('prof-skills').value = profile.skills || '';
+                document.getElementById('prof-experience').value = profile.experience || '';
+
+                if (profile.title) {
+                    document.getElementById('user-display-title').innerText = profile.title;
+                } else {
+                    document.getElementById('user-display-title').innerText = 'Complete your profile details';
+                }
+
+                renderResumeSection(profile.resume_path);
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        function renderResumeSection(resumePath) {
+            const resumeContainer = document.getElementById('resume-container');
+            
+            if (resumePath) {
+                resumeContainer.innerHTML = `
+                    <div class="resume-file-info">
+                        <div>
+                            <i class="fa-solid fa-file-pdf" style="font-size: 20px; color: var(--success); margin-right: 10px;"></i>
+                            <strong>Active Resume</strong>: 
+                            <a href="${resumePath}" target="_blank">View Uploaded Resume <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px;"></i></a>
+                        </div>
+                        <button onclick="deleteResumeUI()" class="btn btn-danger btn-sm" style="padding: 4px 10px;">
+                            <i class="fa-solid fa-trash-can"></i> Replace
+                        </button>
+                    </div>
+                `;
+            } else {
+                resumeContainer.innerHTML = `
+                    <div class="resume-upload-zone" onclick="document.getElementById('resume-file-input').click()">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 32px; color: var(--primary); margin-bottom: 10px;"></i>
+                        <p style="font-weight: 600; margin-bottom: 5px;">Click to upload your resume</p>
+                        <p style="font-size: 11px; color: var(--text-muted);">PDF, Word, or TXT (Max size: 5MB)</p>
+                        <input type="file" id="resume-file-input" style="display: none;" onchange="uploadResumeFile(this)">
+                    </div>
+                `;
+            }
+        }
+
+        function deleteResumeUI() {
+            renderResumeSection(null); // Return upload zone
+        }
+
+        async function uploadResumeFile(input) {
+            if (!input.files || input.files.length === 0) return;
+            const file = input.files[0];
+            
+            const formData = new FormData();
+            formData.append('resume', file);
+
+            try {
+                showNotification("Uploading resume...", "info");
+                
+                const user = getSessionUser();
+                const response = await fetch('/api/profile/upload-resume', {
+                    method: 'POST',
+                    headers: {
+                        'X-User-Id': user.id,
+                        'X-User-Role': user.role
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error);
+
+                showNotification("Resume uploaded successfully!", "success");
+                loadProfileData(); // reload
+            } catch (err) {
+                showNotification(err.message, "error");
+            }
+        }
+
+        async function updateProfile(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('prof-name').value;
+            const email = document.getElementById('prof-email').value;
+            const title = document.getElementById('prof-title').value;
+            const skills = document.getElementById('prof-skills').value;
+            const experience = document.getElementById('prof-experience').value;
+
+            try {
+                const result = await apiRequest('/api/profile', {
+                    method: 'PUT',
+                    body: JSON.stringify({ name, email, title, skills, experience })
+                });
+
+                if (result.success) {
+                    showNotification("Profile details saved successfully!", "success");
+                    
+                    // Update active user state in storage
+                    const user = getSessionUser();
+                    user.name = name;
+                    setSessionUser(user);
+
+                    document.getElementById('user-display-name').innerText = name;
+                    document.getElementById('user-display-title').innerText = title || 'Complete your profile details';
+                    renderNavigation(); // refresh header name
+                }
+            } catch (err) {
+                showNotification(err.message, "error");
+            }
+        }
+    </script>
+</body>
+</html>

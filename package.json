@@ -1,0 +1,19 @@
+{
+  "name": "job-market",
+  "version": "1.0.0",
+  "description": "Online Recruitment and Job Portal",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.10.1"
+  },
+  "author": "",
+  "license": "ISC"
+}

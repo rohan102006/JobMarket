@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Job Market</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .about-hero {
+            text-align: center;
+            padding: 60px 0;
+            background: radial-gradient(circle at top, rgba(168, 85, 247, 0.1) 0%, transparent 60%);
+        }
+
+        .about-hero h1 {
+            font-size: 44px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--text-main), var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .about-hero p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 16px;
+        }
+
+        .about-section {
+            margin-bottom: 50px;
+        }
+
+        .about-section h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .about-section p {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-item {
+            padding: 24px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .feature-item h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .feature-item p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header></header>
+
+    <main>
+        <section class="about-hero">
+            <h1>Connecting Talent with Opportunity</h1>
+            <p>Job Market is a modern, web-based recruitment platform built to simplify job discovery and employer management.</p>
+        </section>
+
+        <section class="card about-section">
+            <h2>Our Mission</h2>
+            <p>Our core objective is to dismantle the barriers that exist in the job search process. We believe that job seekers should have direct, unfettered access to career openings and status tracker updates, and recruiters should have robust tools to source, screen, and select matching candidates without complex interfaces.</p>
+            <p>Job Market enables complete role-based management, allowing candidate profile organization, resume handling, and administrator oversight to keep the recruitment space secure, organic, and clean.</p>
+        </section>
+
+        <section class="about-section">
+            <h2 style="text-align: center; margin-bottom: 10px;">Platform Highlights</h2>
+            <p style="text-align: center; max-width: 600px; margin: 0 auto 30px auto; font-size: 14px;">Designed with premium glassmorphic elements, quick searches, and powerful tools for recruiters, candidates, and admins.</p>
+            
+            <div class="features-list">
+                <div class="card feature-item">
+                    <div class="feature-icon"><i class="fa-solid fa-user-check"></i></div>
+                    <h3>Role-based Dashboards</h3>
+                    <p>Tailored portals for Candidates to track applications, Recruiters to publish vacancies, and Admins to moderate users.</p>
+                </div>
+                <div class="card feature-item">
+                    <div class="feature-icon"><i class="fa-solid fa-magnifying-glass-location"></i></div>
+                    <h3>Robust Filters</h3>
+                    <p>Quick search tools to filter positions by location, category, salary range, and experience qualifications.</p>
+                </div>
+                <div class="card feature-item">
+                    <div class="feature-icon"><i class="fa-solid fa-file-shield"></i></div>
+                    <h3>Resume Uploads</h3>
+                    <p>Directly upload PDF, DOCX, or text resumes to candidate profiles, making applications fast and seamless.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact Us</a>
+        </div>
+        <p>&copy; 2026 Job Market Portal. All Rights Reserved.</p>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

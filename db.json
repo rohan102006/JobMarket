@@ -1,0 +1,200 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@jobmarket.com",
+      "password": "admin",
+      "role": "Admin",
+      "name": "System Administrator",
+      "resume_path": null,
+      "skills": null,
+      "experience": null,
+      "title": null,
+      "created_at": "2026-07-17T06:20:13.502Z"
+    },
+    {
+      "id": 2,
+      "email": "recruiter@google.com",
+      "password": "recruiter",
+      "role": "Recruiter",
+      "name": "Sundar Pichai",
+      "resume_path": null,
+      "skills": null,
+      "experience": null,
+      "title": null,
+      "created_at": "2026-07-17T06:20:13.504Z"
+    },
+    {
+      "id": 3,
+      "email": "recruiter@microsoft.com",
+      "password": "recruiter",
+      "role": "Recruiter",
+      "name": "Satya Nadella",
+      "resume_path": null,
+      "skills": null,
+      "experience": null,
+      "title": null,
+      "created_at": "2026-07-17T06:20:13.504Z"
+    },
+    {
+      "id": 4,
+      "email": "seeker@gmail.com",
+      "password": "user",
+      "role": "User",
+      "name": "John Doe",
+      "resume_path": null,
+      "skills": "HTML, CSS, JavaScript, Node.js",
+      "experience": "2 years",
+      "title": "Full Stack Engineer",
+      "created_at": "2026-07-17T06:20:13.504Z"
+    },
+    {
+      "id": 5,
+      "email": "rohan22206@gmail.com",
+      "password": "@rohan",
+      "role": "User",
+      "name": "rohan",
+      "resume_path": null,
+      "skills": null,
+      "experience": null,
+      "title": null,
+      "created_at": "2026-07-17T06:33:26.878Z"
+    },
+    {
+      "id": 6,
+      "email": "yash@gmail.com",
+      "password": "yash",
+      "role": "Recruiter",
+      "name": "yash",
+      "resume_path": null,
+      "skills": null,
+      "experience": null,
+      "title": null,
+      "created_at": "2026-07-17T06:35:46.168Z"
+    },
+    {
+      "id": 7,
+      "email": "r@gamil.com",
+      "password": "@rohan",
+      "role": "User",
+      "name": "rohan",
+      "resume_path": null,
+      "skills": null,
+      "experience": null,
+      "title": null,
+      "created_at": "2026-09-21T08:17:51.419Z"
+    }
+  ],
+  "companies": [
+    {
+      "id": 1,
+      "recruiter_id": 2,
+      "name": "Google LLC",
+      "description": "Google is a global technology leader focused on improving the ways people connect with information.",
+      "website": "https://google.com",
+      "location": "Mountain View, CA",
+      "logo": "",
+      "created_at": "2026-07-17T06:20:13.504Z"
+    },
+    {
+      "id": 2,
+      "recruiter_id": 3,
+      "name": "Microsoft Corp",
+      "description": "Microsoft enables digital transformation for the era of an intelligent cloud and an intelligent edge.",
+      "website": "https://microsoft.com",
+      "location": "Redmond, WA",
+      "logo": "",
+      "created_at": "2026-07-17T06:20:13.504Z"
+    },
+    {
+      "id": 3,
+      "recruiter_id": 6,
+      "name": "yash's Company",
+      "description": "Describe your company here...",
+      "website": "https://",
+      "location": "Remote",
+      "logo": "",
+      "created_at": "2026-07-17T06:35:46.172Z"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 1,
+      "company_id": 1,
+      "title": "Software Engineer - Google Cloud",
+      "category": "Engineering",
+      "location": "Mountain View, CA",
+      "salary": "$150,000 - $180,000",
+      "experience_level": "Mid-Level",
+      "description": "Join the Google Cloud team to design and implement highly scalable infrastructure services. You will write high-quality Node.js/Go services, participate in system design, and collaborate with globally distributed product teams.",
+      "requirements": "Bachelor's degree in Computer Science, 3+ years experience with backend systems, strong understanding of cloud architectures.",
+      "status": "Active",
+      "created_at": "2026-07-17T06:20:13.504Z"
+    },
+    {
+      "id": 2,
+      "company_id": 2,
+      "title": "Frontend Developer - Teams UI",
+      "category": "Frontend",
+      "location": "Remote",
+      "salary": "$120,000 - $145,000",
+      "experience_level": "Junior",
+      "description": "We are looking for a passionate UI engineer to work on Microsoft Teams. You will build user-friendly dashboard interfaces using standard HTML, CSS, and modern framework techniques, focusing on accessibility and speed.",
+      "requirements": "1+ years experience in frontend development, proficiency in HTML5, CSS3, JavaScript, and responsive design layouts.",
+      "status": "Active",
+      "created_at": "2026-07-17T06:20:13.504Z"
+    },
+    {
+      "id": 3,
+      "company_id": 1,
+      "title": "Technical Product Manager",
+      "category": "Management",
+      "location": "New York, NY",
+      "salary": "$160,000 - $210,000",
+      "experience_level": "Senior",
+      "description": "As a Product Manager at Google, you will lead the design and deployment of security-focused authentication platforms. You will partner with engineers, recruiters, and administrators to roll out key portal upgrades.",
+      "requirements": "5+ years PM experience, tech background in software engineering, excellent cross-functional collaboration skills.",
+      "status": "Active",
+      "created_at": "2026-07-17T06:20:13.504Z"
+    },
+    {
+      "id": 4,
+      "company_id": 3,
+      "title": "ai teacher",
+      "category": "Engineering",
+      "location": "jaipur",
+      "salary": "1rupees",
+      "experience_level": "Mid-Level",
+      "description": "hello come ",
+      "requirements": "none",
+      "status": "Active",
+      "created_at": "2026-07-17T06:36:45.563Z"
+    }
+  ],
+  "applications": [
+    {
+      "id": 1,
+      "job_id": 1,
+      "user_id": 4,
+      "status": "Pending",
+      "resume_text": "John Doe - Resume\nSkills: Javascript, Node, HTML, CSS.\nExperience: Built job seeker dashboard portals, handled API database migrations.",
+      "applied_at": "2026-07-17T06:20:13.504Z"
+    },
+    {
+      "id": 2,
+      "job_id": 2,
+      "user_id": 5,
+      "status": "Pending",
+      "resume_text": "please sir hire me i am poor",
+      "applied_at": "2026-07-17T06:34:23.320Z"
+    },
+    {
+      "id": 3,
+      "job_id": 4,
+      "user_id": 5,
+      "status": "Rejected",
+      "resume_text": "Applied using profile details.\nExperience: N/A\nSkills: N/A",
+      "applied_at": "2026-07-17T06:37:24.341Z"
+    }
+  ]
+}
